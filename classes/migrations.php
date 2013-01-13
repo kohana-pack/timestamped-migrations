@@ -12,7 +12,7 @@ class Migrations
 {
 	protected $config;
 	protected $driver;
-	protected $migrations;
+	protected $migrations = array();
 	public $output = NULL;
 
 	/**
@@ -93,7 +93,7 @@ class Migrations
 	 */
 	public function load_migration($version)
 	{
-		$f = glob(sprintf($this->config['path'] . DIRECTORY_SEPARATOR . '%d_*.php', $version));
+		$f = Kohana::find_file('migrations', $version);
 
 		if (count($f) > 1)
 			throw new Migration_Exception('Only one migration per step is permitted, there are :count of version :version', array(':count' => count($f), ':version' => $version));
@@ -101,8 +101,8 @@ class Migrations
 		if (count($f) == 0)
 			throw new Migration_Exception('Migration step not found with version :version', array(":version" => $version));
 
-		$file = basename($f[0]);
-		$name = basename($f[0], EXT);
+		$file = basename($f);
+		$name = basename($f, EXT);
 
 		// Filename validations
 		if ( ! preg_match('/^\d+_(\w+)$/', $name, $match))
@@ -110,7 +110,7 @@ class Migrations
 
 		$match[1] = strtolower($match[1]);
 
-		include_once $f[0];
+		include_once $f;
 		$class = ucfirst($match[1]);
 
 		if ( ! class_exists($class))
@@ -128,18 +128,12 @@ class Migrations
 	{
 		if ( ! $this->migrations)
 		{
-			$migrations = glob($this->config['path'] . DIRECTORY_SEPARATOR . '*' . EXT);
-			$ids = array();
+			$migrations = Kohana::list_files('migrations');
 			foreach ((array) $migrations as $file)
 			{
 				$name = basename($file, EXT);
-				$matches = array();
-				if ( preg_match('/^(\d+)_(\w+)$/', $name, $matches))
-				{
-					$ids[] = intval($matches[1]);
-				}
+				$this->migrations[] = $name;
 			}
-			$this->migrations = $ids;
 		}
 		return $this->migrations;
 	}

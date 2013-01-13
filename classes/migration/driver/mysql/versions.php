@@ -21,7 +21,7 @@ class Migration_Driver_Mysql_Versions extends Migration_Driver_Versions
 
 	public function init()
 	{
-		$this->pdo->exec('CREATE TABLE IF NOT EXISTS `'.self::SCHEMA_TABLE.'` (version INT)');
+		$this->pdo->exec('CREATE TABLE IF NOT EXISTS `'.self::SCHEMA_TABLE.'` (version VARCHAR(255))');
 
 		return $this;
 	}
@@ -31,7 +31,7 @@ class Migration_Driver_Mysql_Versions extends Migration_Driver_Versions
 		$migrations = array();
 		foreach($this->pdo->query('SELECT version FROM `'.self::SCHEMA_TABLE.'` ORDER BY version ASC') as $result)
 		{
-			$migrations[] = intval($result['version']);
+			$migrations[] = $result['version'];
 		}
 
 		return $migrations;
