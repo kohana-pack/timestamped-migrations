@@ -129,6 +129,9 @@ class Migrations
 		if ( ! $this->migrations)
 		{
 			$migrations = Kohana::list_files('migrations');
+			$migrations = array_filter($migrations, function($var) {
+				return preg_match('/'.EXT.'$/', $var);
+			});
 			foreach ((array) $migrations as $file)
 			{
 				$name = basename($file, EXT);
