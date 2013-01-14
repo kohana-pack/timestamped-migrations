@@ -16,7 +16,7 @@ class Migration_Driver_Mysql_Column extends Migration_Driver_Column
 	 */
 	static protected $types = array
 	(
-		'primary_key' => array('type' => 'INT', 'null' => FALSE, 'auto' => TRUE, 'primary' => TRUE),
+		'primary_key' => array('type' => 'INT', 'null' => FALSE, 'auto' => TRUE, 'primary' => TRUE, 'unsigned' => TRUE),
 		'string' => array('type' => 'VARCHAR', 'limit' => 255),
 		'text' => array('type' => 'TEXT'),
 		'integer' => array('type' => 'INT'),
