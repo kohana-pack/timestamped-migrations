@@ -24,6 +24,7 @@
  *  - description or text - text
  *
  * @param string name required paramter - the name of the migration
+ * @param string module optional parametr - the module name for migration
  * @author     Ivan Kerin
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
@@ -33,6 +34,7 @@ class Minion_Task_DB_Generate extends Minion_Task {
 	protected $_config = array(
 		'name' => NULL,
 		'template' => NULL,
+		'module' => NULL,
 	);
 
 	public function build_validation(Validation $validation)
@@ -45,7 +47,7 @@ class Minion_Task_DB_Generate extends Minion_Task {
 	{
 		$migrations = new Migrations(array('log' => 'Minion_CLI::write'));
 
-		$migration = $migrations->generate_new_migration_file($options['name'], $options['template']);
+		$migration = $migrations->generate_new_migration_file($options['name'], $options['template'], arr::get($options, 'module'));
 
 		Minion_CLI::write(Minion_CLI::color($migration, 'green').Minion_CLI::color(' Migration File Generated', 'brown'));
 	}
