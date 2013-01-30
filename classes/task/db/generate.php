@@ -29,7 +29,7 @@
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Minion_Task_DB_Generate extends Minion_Task {
+class Task_Db_Generate extends Minion_Task {
 
 	protected $_config = array(
 		'name' => NULL,
@@ -43,7 +43,7 @@ class Minion_Task_DB_Generate extends Minion_Task {
 			->rule('name', 'not_empty');
 	}
 
-	public function execute(array $options)
+	public function _execute(array $options)
 	{
 		$migrations = new Migrations(array('log' => 'Minion_CLI::write'));
 
