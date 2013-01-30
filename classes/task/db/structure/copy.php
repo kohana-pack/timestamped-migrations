@@ -10,7 +10,7 @@
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Minion_Task_DB_Structure_Copy extends Minion_Database {
+class Task_DB_Structure_Copy extends Minion_Database {
 
 	protected $_config = array(
 		'from' => 'default',
@@ -24,7 +24,7 @@ class Minion_Task_DB_Structure_Copy extends Minion_Database {
 			->rule('to', 'not_empty');
 	}
 
-	public function execute(array $options)
+	public function _execute(array $options)
 	{
 		Minion_Task::factory('db:structure:dump')->execute(array(
 			'database' => $options['from'], 

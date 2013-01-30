@@ -8,14 +8,14 @@
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Minion_Task_DB_Structure_Dump extends Minion_Database {
+class Task_Db_Structure_Dump extends Minion_Database {
 
 	protected $_config = array(
 		'database' => 'default',
 		'file' => FALSE,
 	);
 
-	public function execute(array $options)
+	public function _execute(array $options)
 	{
 		$db = $this->db_params($options['database']);
 
