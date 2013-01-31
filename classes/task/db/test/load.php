@@ -14,7 +14,7 @@ class Task_Db_Test_Load extends Minion_Database {
 	{
 		$db = $this->db_params(Kohana::TESTING);
 
-		Minion_Task::factory('db:structure:load')->execute(array(
+		Minion_Task::factory(array('task'=>'db:structure:load'))->execute(array(
 			'database' => Kohana::TESTING,
 			'force' => NULL,
 			'file' => NULL,
@@ -24,7 +24,7 @@ class Task_Db_Test_Load extends Minion_Database {
 
 		foreach ($module_test_schemas as $schema) 
 		{
-			Minion_Task::factory('db:structure:load')->execute(array(
+			Minion_Task::factory(array('task'=>'db:structure:load'))->execute(array(
 				'database' => Kohana::TESTING,
 				'force' => NULL,
 				'file' => $schema,

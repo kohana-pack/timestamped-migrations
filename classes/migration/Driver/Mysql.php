@@ -23,9 +23,9 @@ class Migration_Driver_Mysql extends Migration_Driver
 		{
 			$database = Kohana::$config->load('database.'.$database);
 
-			if ($database['type'] !== 'pdo')
+			if ($database['type'] !== 'PDO')
 			{
-				$database['connection']['dsn'] = $database['type'].':'.
+				$database['connection']['dsn'] = strtolower($database['type']).':'.
 				'host='.$database['connection']['hostname'].';'.
 				'dbname='.$database['connection']['database'];
 			}

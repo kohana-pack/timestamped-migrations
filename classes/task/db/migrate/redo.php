@@ -11,7 +11,7 @@
  */
 class Task_Db_Migrate_Redo extends Minion_Migration {
 
-	protected $_config = array(
+	protected $_options = array(
 		'version' => NULL,
 		'steps' => 1,
 		'dry-run' => FALSE

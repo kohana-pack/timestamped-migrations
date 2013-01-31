@@ -31,7 +31,7 @@
  */
 class Task_Db_Generate extends Minion_Task {
 
-	protected $_config = array(
+	protected $_options = array(
 		'name' => NULL,
 		'template' => NULL,
 		'module' => NULL,

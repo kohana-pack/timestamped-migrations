@@ -10,7 +10,7 @@
  */
 class Task_Db_Recreate extends Minion_Task {
 
-	protected $_config = array(
+	protected $_options = array(
 		'force' => FALSE,
 	);
 
@@ -23,7 +23,7 @@ class Task_Db_Recreate extends Minion_Task {
 			$migrations = new Migrations(array('log' => 'Minion_CLI::write'));
 			$migrations->clear_all();
 
-			Minion_Task::factory('db:migrate')->execute($options);
+			Minion_Task::factory(array('task'=>'db:migrate'))->execute($options);
 		}
 		else
 		{
