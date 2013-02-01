@@ -21,7 +21,7 @@ class Minion_Task_DB_Structure_Load extends Minion_Database {
 	public function execute(array $options)
 	{
 		$db = $this->db_params($options['database']);
-		$file = $options['file'] ? $options['file'] : Kohana::$config->load("migrations.path").DIRECTORY_SEPARATOR.'schema.sql';
+		$file = $options['file'] ? $options['file'] : APPPATH.DIRECTORY_SEPARATOR.Kohana::$config->load("migrations.path").DIRECTORY_SEPARATOR.'schema.sql';
 
 		if ($options['force'] === NULL OR 'yes' === Minion_CLI::read("This will destroy database ".$db['database']." Are you sure? [yes/NO]"))
 		{

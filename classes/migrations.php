@@ -12,7 +12,7 @@ class Migrations
 {
 	protected $config;
 	protected $driver;
-	protected $migrations;
+	protected $migrations = array();
 	public $output = NULL;
 
 	/**
@@ -35,9 +35,9 @@ class Migrations
 
 		$this->driver->versions()->init();
 
-		if( ! is_dir($this->config['path']))
+		if( ! is_dir(APPPATH.DIRECTORY_SEPARATOR.$this->config['path']))
 		{
-			mkdir($this->config['path'], 0777, TRUE);
+			mkdir(APPPATH.DIRECTORY_SEPARATOR.$this->config['path'], 0777, TRUE);
 		}
 	}
 	
@@ -51,7 +51,7 @@ class Migrations
 		$this->driver->versions()->clear($version);
 	}
 
-	public function generate_new_migration_file($name, $actions_template = NULL)
+	public function generate_new_migration_file($name, $actions_template = NULL, $module = NULL)
 	{
 		$actions = new Migration_Actions($this->driver);
 
@@ -67,9 +67,30 @@ class Migrations
 		$template = file_get_contents(Kohana::find_file('templates', 'migration', 'tpl'));
 		$class_name = str_replace(' ', '_', ucwords(str_replace('_',' ',$name)));
 		$filename = sprintf("%d_$name.php", time());
+		if($module)
+		{
+			if(file_exists(MODPATH.$module))
+			{
+				$path = MODPATH.$module.DIRECTORY_SEPARATOR.$this->config['path'];
+			}
+			else
+			{
+				throw new Migration_Exception('Module, :name, not found', array(':name' => $module));
+			}
+		}
+		else
+		{
+			$path = APPPATH.$this->config['path'];
+		}
 
+		if( ! file_exists($path))
+		{
+			mkdir($path);
+		}
+
+		$full_path = $path . DIRECTORY_SEPARATOR . $filename;
 		file_put_contents(
-			$this->config['path'].DIRECTORY_SEPARATOR.$filename, 
+			$full_path,
 			strtr($template, array(
 				'{up}' => join("\n", array_map('Migrations::indent', $actions->up)), 
 				'{down}' => join("\n", array_map('Migrations::indent', $actions->down)), 
@@ -77,7 +98,7 @@ class Migrations
 			))
 		);
 
-		return $filename;
+		return $full_path;
 	}
 
 	static function indent($action)
@@ -93,7 +114,7 @@ class Migrations
 	 */
 	public function load_migration($version)
 	{
-		$f = glob(sprintf($this->config['path'] . DIRECTORY_SEPARATOR . '%d_*.php', $version));
+		$f = Kohana::find_file('migrations', $version);
 
 		if (count($f) > 1)
 			throw new Migration_Exception('Only one migration per step is permitted, there are :count of version :version', array(':count' => count($f), ':version' => $version));
@@ -101,8 +122,8 @@ class Migrations
 		if (count($f) == 0)
 			throw new Migration_Exception('Migration step not found with version :version', array(":version" => $version));
 
-		$file = basename($f[0]);
-		$name = basename($f[0], EXT);
+		$file = basename($f);
+		$name = basename($f, EXT);
 
 		// Filename validations
 		if ( ! preg_match('/^\d+_(\w+)$/', $name, $match))
@@ -110,7 +131,7 @@ class Migrations
 
 		$match[1] = strtolower($match[1]);
 
-		include_once $f[0];
+		include_once $f;
 		$class = ucfirst($match[1]);
 
 		if ( ! class_exists($class))
@@ -128,18 +149,15 @@ class Migrations
 	{
 		if ( ! $this->migrations)
 		{
-			$migrations = glob($this->config['path'] . DIRECTORY_SEPARATOR . '*' . EXT);
-			$ids = array();
+			$migrations = Kohana::list_files($this->config['path']);
+			$migrations = array_filter($migrations, function($var) {
+				return preg_match('/'.EXT.'$/', $var);
+			});
 			foreach ((array) $migrations as $file)
 			{
 				$name = basename($file, EXT);
-				$matches = array();
-				if ( preg_match('/^(\d+)_(\w+)$/', $name, $matches))
-				{
-					$ids[] = intval($matches[1]);
-				}
+				$this->migrations[] = $name;
 			}
-			$this->migrations = $ids;
 		}
 		return $this->migrations;
 	}
