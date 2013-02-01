@@ -20,7 +20,7 @@ class Task_Db_Migrate extends Minion_Migration {
 		$up = array();
 		$down = array();
 
-		if ($options['version'])
+		if (Arr::get($options,"version"))
 		{
 			foreach ($all as $migration)
 			{
@@ -34,7 +34,7 @@ class Task_Db_Migrate extends Minion_Migration {
 				}
 			}
 		}
-		elseif ($options['steps']) 
+		elseif (Arr::get($options,"steps"))
 		{
 			$up = array_slice($unexecuted, 0, $options['steps']);
 		}
@@ -43,6 +43,6 @@ class Task_Db_Migrate extends Minion_Migration {
 			$up = $unexecuted;
 		}
 
-		$this->migrate($up, $down, $options['dry-run'] === NULL);
+		$this->migrate($up, $down, Arr::get($options,"dry-run") !== NULL);
 	}
 }

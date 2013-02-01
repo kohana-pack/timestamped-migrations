@@ -47,7 +47,7 @@ class Task_Db_Generate extends Minion_Task {
 	{
 		$migrations = new Migrations(array('log' => 'Minion_CLI::write'));
 
-		$migration = $migrations->generate_new_migration_file($options['name'], $options['template'], arr::get($options, 'module'));
+		$migration = $migrations->generate_new_migration_file($options['name'], $options['template'], Arr::get($options, 'module'));
 
 		Minion_CLI::write(Minion_CLI::color($migration, 'green').Minion_CLI::color(' Migration File Generated', 'brown'));
 	}
