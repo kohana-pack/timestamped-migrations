@@ -10,15 +10,15 @@
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Minion_Task_DB_Structure_Load extends Minion_Database {
+class Task_Db_Structure_Load extends Minion_Database {
 
-	protected $_config = array(
+	protected $_options = array(
 		'database' => 'default',
 		'force' => FALSE,
 		'file' => FALSE
 	);
 
-	public function execute(array $options)
+	public function _execute(array $options)
 	{
 		$db = $this->db_params($options['database']);
 		$file = $options['file'] ? $options['file'] : APPPATH.DIRECTORY_SEPARATOR.Kohana::$config->load("migrations.path").DIRECTORY_SEPARATOR.'schema.sql';

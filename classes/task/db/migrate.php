@@ -9,9 +9,9 @@
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Minion_Task_DB_Migrate extends Minion_Migration {
+class Task_Db_Migrate extends Minion_Migration {
 
-	public function execute(array $options)
+	public function _execute(array $options)
 	{
 		$executed = $this->executed_migrations();
 		$unexecuted = $this->unexecuted_migrations();

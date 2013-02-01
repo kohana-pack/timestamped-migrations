@@ -6,9 +6,9 @@
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Minion_Task_DB_Version extends Minion_Task {
+class Task_Db_Version extends Minion_Task {
 
-	public function execute(array $options)
+	public function _execute(array $options)
 	{
 		$migrations = new Migrations(array('log' => 'Minion_CLI::write'));
 

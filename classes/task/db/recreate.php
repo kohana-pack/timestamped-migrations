@@ -8,13 +8,13 @@
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-class Minion_Task_DB_Recreate extends Minion_Task {
+class Task_Db_Recreate extends Minion_Task {
 
-	protected $_config = array(
+	protected $_options = array(
 		'force' => FALSE,
 	);
 
-	public function execute(array $options)
+	public function _execute(array $options)
 	{
 		if ($options['force'] === NULL OR 'yes' === Minion_CLI::read('This will destroy all data in the current database. Are you sure? [yes/NO]'))
 		{
@@ -23,7 +23,7 @@ class Minion_Task_DB_Recreate extends Minion_Task {
 			$migrations = new Migrations(array('log' => 'Minion_CLI::write'));
 			$migrations->clear_all();
 
-			Minion_Task::factory('db:migrate')->execute($options);
+			Minion_Task::factory(array('task'=>'db:migrate'))->execute($options);
 		}
 		else
 		{
