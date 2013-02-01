@@ -12,7 +12,7 @@
  */
 class Task_Db_Structure_Load extends Minion_Database {
 
-	protected $_config = array(
+	protected $_options = array(
 		'database' => 'default',
 		'force' => FALSE,
 		'file' => FALSE

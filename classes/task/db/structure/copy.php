@@ -12,7 +12,7 @@
  */
 class Task_DB_Structure_Copy extends Minion_Database {
 
-	protected $_config = array(
+	protected $_options = array(
 		'from' => 'default',
 		'to' => NULL,
 		'force' => FALSE,
@@ -26,12 +26,12 @@ class Task_DB_Structure_Copy extends Minion_Database {
 
 	public function _execute(array $options)
 	{
-		Minion_Task::factory('db:structure:dump')->execute(array(
+		Minion_Task::factory(array('task'=>'db:structure:dump'))->execute(array(
 			'database' => $options['from'], 
 			'force' => $options['force']
 		));
 
-		Minion_Task::factory('db:structure:load')->execute(array(
+		Minion_Task::factory(array('task'=>'db:structure:load'))->execute(array(
 			'database' => $options['to'], 
 			'force' => $options['force']
 		));
