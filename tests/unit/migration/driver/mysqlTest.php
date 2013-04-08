@@ -12,7 +12,7 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 		$driver = $this->getMock('Migration_Driver_Mysql', array('execute'), array(Kohana::TESTING));
 		$driver->expects($this->at(0))->method('execute')->with($this->logicalAnd(
 			$this->stringContains('CREATE TABLE `test`'),
-			$this->stringContains('`id` INT NOT NULL AUTO_INCREMENT'),
+			$this->stringContains('`id` INT UNSIGNED NOT NULL AUTO_INCREMENT'),
 			$this->stringContains('`field1` INT'),
 			$this->stringContains('`field2` VARCHAR (255) NOT NULL'),
 			$this->stringContains('ENGINE=innoDB'),
@@ -54,7 +54,7 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 	{
 		$driver = $this->getMock('Migration_Driver_Mysql', array('execute'), array(Kohana::TESTING));
 		$driver->expects($this->at(0))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` INT'));
-		$driver->expects($this->at(1))->method('execute')->with($this->equalTo('ALTER TABLE `table1` DROP PRIMARY KEY, ADD COLUMN `field1` INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`field1`)'));
+		$driver->expects($this->at(1))->method('execute')->with($this->equalTo('ALTER TABLE `table1` DROP PRIMARY KEY, ADD COLUMN `field1` INT UNSIGNED NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`field1`)'));
 
 		$driver->add_column('table1', 'field1', 'integer');
 		$driver->add_column('table1', 'field1', 'primary_key');
@@ -134,7 +134,7 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 			array(array('type' => 'BIGINT'), '`field2` BIGINT'),
 			array('integer', '`field2` INT'),
 			array('boolean', '`field2` TINYINT (1) NOT NULL'),
-			array('primary_key', '`field2` INT NOT NULL AUTO_INCREMENT'),
+			array('primary_key', '`field2` INT UNSIGNED NOT NULL AUTO_INCREMENT'),
 			array('decimal', '`field2` DECIMAL (10, 2)'),
 			array(array('decimal', 'limit' => 7), '`field2` DECIMAL (7, 2)'),
 			array(array('decimal', 'limit' => 8, 'precision' => 10), '`field2` DECIMAL (8, 10)'),
