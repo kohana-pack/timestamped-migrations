@@ -7,7 +7,7 @@ Migrations also allow you to describe these transformations using PHP. The great
 Dependencies
 ------------
 
-This module utilizes [kohana-minion](https://github.com/kohana/minion/tree/k3.2-v1.0) for it's command line interface. The system is fairly decoupled from it though so you can easily implement this with other cli tools if you use something different.
+This module utilizes [kohana-minion](https://github.com/kohana/minion) for it's command line interface. The system is fairly decoupled from it though so you can easily implement this with other cli tools if you use something different.
 
 Options
 -------
