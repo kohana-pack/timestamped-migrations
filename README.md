@@ -13,8 +13,8 @@ Options
 -------
 
 * log - this is the logging function to be used, to integrate into whatever controller/backend you are using
-* path - the path to where the migrations will be stored, defaults to APPPATH/migrations
-* type - the driver for the backend for which migrations have been already executed as well as the migrations themselves, defaults to mysql
+* path - the path to where the migrations will be stored, defaults to /migrations
+* database - Database config name
 
 Command line tools
 ==================
@@ -25,9 +25,9 @@ This module provides a set of kohana-minion tasks to work with migrations giving
 
 The most common migration related task you use will probably be db:migrate. In its most basic form it just runs the up method for all the migrations that have not yet been run. If there are no such migrations it exits.
 
-If you specify a target version, Active Record will run the required migrations (up or down) until it has reached the specified version. The version is the numerical prefix on the migration’s filename. For example to migrate to version 1322837510 run
+If you specify a target version, Active Record will run the required migrations (up or down) until it has reached the specified version. The version is the numerical prefix on the migration’s filename. For example to migrate to version 1322837510_simple_migrate run
 
-	./minion db:migrate --version=1322837510
+	./minion db:migrate --version=1322837510_simple_migrate
 
 If this is greater than the current version (i.e. it is migrating upwards) this will run the up method on all migrations up to and including 2008090612, if migrating downwards this will run the down method on all the migrations down to, but not including, 2008090612.
 
@@ -54,9 +54,9 @@ Being Specific
 
 If you need to run a specific migration up or down the db:migrate:up and db:migrate:down commands will do that. Just specify the appropriate version and the corresponding migration will have its up or down method invoked, for example
 
-	./minion db:migrate:up --version=1321025460
+	./minion db:migrate:up --version=1321025460_simple_migrate
 
-will run the up method from the 2008090612 migration. These commands check whether the migration has already run, so for example db:migrate:up --version=2008090612 will do nothing if Migrations module believes that --version=1321025460 has already been run.
+will run the up method from the 2008090612 migration. These commands check whether the migration has already run, so for example db:migrate:up --version=2008090612 will do nothing if Migrations module believes that --version=1321025460_simple_migrate has already been run.
 
 Dry Run
 -------

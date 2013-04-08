@@ -8,7 +8,7 @@
  */
 abstract class Minion_Migration extends Minion_Task {
 
-	protected $_config = array(
+	protected $_options = array(
 		'version' => NULL,
 		'steps' => NULL,
 		'dry-run' => FALSE
@@ -54,8 +54,7 @@ abstract class Minion_Migration extends Minion_Task {
 	public function build_validation(Validation $validation)
 	{
 		return parent::build_validation($validation)
-			->rule('version', 'exact_length', array(':value', 10))
-			->rule('version', 'digit')
+			->rule('version', 'min_length', array(':value', 10))
 			->rule('steps', 'digit');
 	}
 }

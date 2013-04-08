@@ -43,6 +43,6 @@ class Task_Db_Migrate extends Minion_Migration {
 			$up = $unexecuted;
 		}
 
-		$this->migrate($up, $down, Arr::get($options,"dry-run") !== NULL);
+		$this->migrate($up, $down, Arr::get($options,"dry-run", FALSE));
 	}
 }
