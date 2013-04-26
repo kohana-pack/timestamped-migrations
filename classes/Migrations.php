@@ -43,12 +43,12 @@ class Migrations
 	
 	public function set_executed($version)
 	{
-		$this->driver->versions()->set($version);
+		$this->driver->versions()->set($version['version']);
 	}
 	
 	public function set_unexecuted($version)
 	{
-		$this->driver->versions()->clear($version);
+		$this->driver->versions()->clear($version['version']);
 	}
 
 	public function generate_new_migration_file($name, $actions_template = NULL, $module = NULL)
@@ -114,13 +114,13 @@ class Migrations
 	 */
 	public function load_migration($version)
 	{
-		$f = Kohana::find_file('migrations', $version);
+		$f = $version['file'];
 
 		if (count($f) > 1)
-			throw new Migration_Exception('Only one migration per step is permitted, there are :count of version :version', array(':count' => count($f), ':version' => $version));
+			throw new Migration_Exception('Only one migration per step is permitted, there are :count of version :version', array(':count' => count($f), ':version' => $version['version']));
 
 		if (count($f) == 0)
-			throw new Migration_Exception('Migration step not found with version :version', array(":version" => $version));
+			throw new Migration_Exception('Migration step not found with version :version', array(":version" => $version['version']));
 
 		$file = basename($f);
 		$name = basename($f, EXT);
@@ -156,10 +156,28 @@ class Migrations
 			foreach ((array) $migrations as $file)
 			{
 				$name = basename($file, EXT);
-				$this->migrations[] = $name;
+				$migration = array();
+				$migration['name'] = $name;
+				$migration['file'] = $file;
+				$migration['version'] = preg_replace("/(\d+)_.*/", "$1", $name);
+				$migration['module'] = $this->module_by_file($file);
+				$this->migrations[] = $migration;
 			}
 		}
 		return $this->migrations;
+	}
+
+	public function module_by_file($file)
+	{
+		foreach (Kohana::modules() as $module_name => $module_path)
+		{
+			if (preg_match("/".preg_quote($module_path, "/")."/", $file))
+			{
+				return $module_name;
+			}
+		}
+
+		return false;
 	}
 
 	public function clear_all()
@@ -171,19 +189,47 @@ class Migrations
 
 	public function get_executed_migrations()
 	{
-		return $this->driver->versions()->get();
+		// TODO: handle the situation when the migration does not exist
+		$migrations = $this->get_migrations();
+		$versions = $this->driver->versions()->get();
+		$versions = array_map(
+			function($version) use($migrations)
+			{
+				$array = array_filter(
+					$migrations,
+					function($value) use($version)
+					{
+						return $value['version'] == $version;
+					}
+				);
+				return array_shift($array);
+			},
+			$versions
+		);
+//		var_dump($versions);
+		return $versions;
 	}
 
 	public function get_unexecuted_migrations()
 	{
-		return array_diff($this->get_migrations(), $this->get_executed_migrations());
+		$qwe =  array_udiff(
+			$this->get_migrations(),
+			$this->get_executed_migrations(),
+			function ($a, $b)
+			{
+				if($a['version'] == $b['version']) return 0;
+				return ($a['version'] > $b['version'])?1:-1;
+			}
+		);
+
+		return $qwe;
 	}
 
 	protected function execute($version, $direction, $dry_run)
 	{
 		$migration = $this->load_migration($version)->dry_run($dry_run);
 
-		$this->log($version.' '.get_class($migration).' : migrating '.$direction.($dry_run ? " -- Dry Run" : ''));
+		$this->log($version['version'].' '.get_class($migration).' : migrating '.$direction.($dry_run ? " -- Dry Run" : ''));
 		$start = microtime(TRUE);
 
 		switch ($direction) 
@@ -206,7 +252,7 @@ class Migrations
 		}
 
 		$end = microtime(TRUE);
-		$this->log($version.' '.get_class($migration).' : migrated ('.number_format($end - $start, 4).'s)');
+		$this->log($version['version'].' '.get_class($migration).' : migrated ('.number_format($end - $start, 4).'s)');
 	}
 
 	public function execute_all($up = array(), $down = array(), $dry_run = FALSE)

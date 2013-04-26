@@ -45,6 +45,6 @@ class Task_Db_Migrate_Redo extends Minion_Migration {
 			$up = array_reverse($down);
 		}
 
-		$this->migrate($up, $down, $options['dry-run'] === NULL);
+		$this->migrate($up, $down, Arr::get($options,"dry-run", FALSE));
 	}
 }

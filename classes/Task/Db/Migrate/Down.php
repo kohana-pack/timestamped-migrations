@@ -24,7 +24,7 @@ class Task_Db_Migrate_Down extends Minion_Migration {
 		$up = array();
 		$down = array();
 
-		if ($options["version"])
+		if (Arr::get($options,"version"))
 		{
 			if (in_array($options["version"], $executed))
 			{
@@ -36,6 +36,6 @@ class Task_Db_Migrate_Down extends Minion_Migration {
 			$down = array_slice($executed, 0, $options['steps']);
 		}
 
-		$this->migrate($up, $down, $options['dry-run'] === NULL);
+		$this->migrate($up, $down, Arr::get($options,"dry-run", FALSE));
 	}
 }
