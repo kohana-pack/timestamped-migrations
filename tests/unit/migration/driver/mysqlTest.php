@@ -34,6 +34,29 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 		), array('id' => false));
 	}
 
+	public function test_column_default_empty_and_zero()
+	{
+		$driver = $this->getMock('Migration_Driver_Mysql', array('execute'), array(Kohana::TESTING));
+		$driver->expects($this->at(0))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` VARCHAR (33) DEFAULT \'\''));
+		$driver->expects($this->at(1))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` INT DEFAULT \'0\''));
+		$driver->expects($this->at(2))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` INT DEFAULT NULL'));
+
+		$driver->add_column('table1', 'field1', array(
+			'string',
+			'limit' => 33,
+			'default' => ''
+		));
+
+		$driver->add_column('table1', 'field1', array(
+			'integer',
+			'default' => 0
+		));
+
+		$driver->add_column('table1', 'field1', array(
+			'integer',
+			'default' => null
+		));
+	}
 
 	public function test_drop_table()
 	{
