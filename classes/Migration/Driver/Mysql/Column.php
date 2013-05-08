@@ -126,10 +126,11 @@ class Migration_Driver_Mysql_Column extends Migration_Driver_Column
 
 		return join(' ', array_filter(array(
 			"`{$this->name}`",
-			$type, 
+			$type,
 			$limit ? ($precision ? ( "({$limit}, {$precision})" ) : "({$limit})") : NULL, 
-			$values ? ('('.join(', ', array_map(array($this->driver->pdo, 'quote'), $values)).')') : NULL, 
-			$default ? ("DEFAULT ".$this->driver->pdo->quote($default)) : NULL,
+			$values ? ('('.join(', ', array_map(array($this->driver->pdo, 'quote'), $values)).')') : NULL,
+			isset($this->params['default']) ? ("DEFAULT ".$this->driver->pdo->quote($default)) : NULL,
+			(array_key_exists('default', $this->params) AND $default === null) ? ("DEFAULT NULL") : NULL,
 			$unsigned ? ("UNSIGNED") : NULL,
 			$null !== NULL ? ($null ? "NULL" : "NOT NULL") : NULL,
 			$auto ? ("AUTO_INCREMENT") : NULL,

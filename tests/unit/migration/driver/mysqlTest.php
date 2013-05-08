@@ -34,6 +34,34 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 		), array('id' => false));
 	}
 
+	public function test_column_default_empty_and_zero()
+	{
+		$driver = $this->getMock('Migration_Driver_Mysql', array('execute'), array(Kohana::TESTING));
+		$driver->expects($this->at(0))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` VARCHAR (33) DEFAULT \'\''));
+		$driver->expects($this->at(1))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` INT DEFAULT \'0\''));
+		$driver->expects($this->at(2))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` INT DEFAULT NULL'));
+		$driver->expects($this->at(3))->method('execute')->with($this->equalTo('ALTER TABLE `table1` ADD COLUMN `field1` INT'));
+
+		$driver->add_column('table1', 'field1', array(
+			'string',
+			'limit' => 33,
+			'default' => ''
+		));
+
+		$driver->add_column('table1', 'field1', array(
+			'integer',
+			'default' => 0
+		));
+
+		$driver->add_column('table1', 'field1', array(
+			'integer',
+			'default' => null
+		));
+
+		$driver->add_column('table1', 'field1', array(
+			'integer',
+		));
+	}
 
 	public function test_drop_table()
 	{
@@ -133,7 +161,7 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 			array('text', '`field2` TEXT'),
 			array(array('type' => 'BIGINT'), '`field2` BIGINT'),
 			array('integer', '`field2` INT'),
-			array('boolean', '`field2` TINYINT (1) NOT NULL'),
+			array('boolean', '`field2` TINYINT (1) DEFAULT \'0\' NOT NULL'),
 			array('primary_key', '`field2` INT UNSIGNED NOT NULL AUTO_INCREMENT'),
 			array('decimal', '`field2` DECIMAL (10, 2)'),
 			array(array('decimal', 'limit' => 7), '`field2` DECIMAL (7, 2)'),
