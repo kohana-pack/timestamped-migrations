@@ -206,13 +206,13 @@ class Migrations
 			},
 			$versions
 		);
-//		var_dump($versions);
+
 		return $versions;
 	}
 
 	public function get_unexecuted_migrations()
 	{
-		$qwe =  array_udiff(
+		$result =  array_udiff(
 			$this->get_migrations(),
 			$this->get_executed_migrations(),
 			function ($a, $b)
@@ -222,7 +222,7 @@ class Migrations
 			}
 		);
 
-		return $qwe;
+		return array_values($result);
 	}
 
 	protected function execute($version, $direction, $dry_run)
@@ -286,5 +286,10 @@ class Migrations
 			echo $message."\n";
 			ob_flush();
 		}
+	}
+
+	public function get_driver()
+	{
+		return $this->driver;
 	}
 }
