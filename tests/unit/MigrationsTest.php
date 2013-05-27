@@ -79,4 +79,32 @@ class MigrationsTest extends Unittest_TestCase
 
 		return $migrations;
 	}
+
+	public function test_generate_new_migration_file()
+	{
+		$test_module_path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'kohana_modules_timestamped_migrations_test';
+		if( ! file_exists($test_module_path))
+		{
+			mkdir($test_module_path);
+		}
+		Kohana::modules(array(
+			'database'   => MODPATH.'database',
+			'minion'     => MODPATH.'minion',
+			'unittest'   => MODPATH.'unittest',
+			'migration'  => MODPATH.'timestamped-migrations',
+			'test_module'=> $test_module_path,
+		));
+
+		$migrations_mock = $this->getMock('Migrations', array('write_migration_file'));
+
+		$migration_path = $migrations_mock->generate_new_migration_file('test', NULL, 'test_module');
+		$this->assertContains($test_module_path.DIRECTORY_SEPARATOR.'migrations', $migration_path);
+
+
+		$migration_path = $migrations_mock->generate_new_migration_file('test', NULL, NULL);
+		$this->assertContains(APPPATH.'migrations', $migration_path);
+
+		rmdir($test_module_path.DIRECTORY_SEPARATOR.'migrations');
+		rmdir($test_module_path);
+	}
 }

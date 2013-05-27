@@ -69,9 +69,10 @@ class Migrations
 		$filename = sprintf("%d_$name.php", time());
 		if($module)
 		{
-			if(file_exists(MODPATH.$module))
+			$module_path = Arr::get(Kohana::modules(), $module);
+			if($module_path)
 			{
-				$path = MODPATH.$module.DIRECTORY_SEPARATOR.$this->config['path'];
+				$path = $module_path.$this->config['path'];
 			}
 			else
 			{
@@ -89,16 +90,20 @@ class Migrations
 		}
 
 		$full_path = $path . DIRECTORY_SEPARATOR . $filename;
-		file_put_contents(
-			$full_path,
-			strtr($template, array(
-				'{up}' => join("\n", array_map('Migrations::indent', $actions->up)), 
-				'{down}' => join("\n", array_map('Migrations::indent', $actions->down)), 
-				'{class_name}' => $class_name
-			))
-		);
+		$migration_file_content = strtr($template, array(
+			'{up}' => join("\n", array_map('Migrations::indent', $actions->up)),
+			'{down}' => join("\n", array_map('Migrations::indent', $actions->down)),
+			'{class_name}' => $class_name
+		));
+
+		$this->write_migration_file($full_path, $migration_file_content);
 
 		return $full_path;
+	}
+
+	protected function write_migration_file($path, $content)
+	{
+		return file_put_contents($path, $content);
 	}
 
 	static function indent($action)
