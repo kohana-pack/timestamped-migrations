@@ -222,4 +222,159 @@ class taskDbMigrateTest extends Unittest_TestCase
 
 		$task_db_migrate_up_mock->_execute($options);
 	}
+
+	public function test_db_redo()
+	{
+		$task_db_migrate_redo_mock = $this->getMock(
+			'Task_Db_Migrate_Redo',
+			array('executed_migrations', 'migrate', 'all_migrations'),
+			array(),
+			'',
+			FALSE
+		);
+		$task_db_migrate_redo_mock
+			->expects($this->any())
+			->method('executed_migrations')
+			->will($this->returnValue(array_reverse($this->get_migrations())));
+		$task_db_migrate_redo_mock
+			->expects($this->any())
+			->method('all_migrations')
+			->will($this->returnValue($this->get_migrations()));
+
+		/****************************
+		 * With version
+		 ****************************/
+		$down_with_version = $up_with_version = array(
+			array(
+				'name' => 'test_migration_2',
+				'file' => '/path/to/test/migration/file_2.php',
+				'version' => 123456790,
+				'module' => 'test',
+			),
+		);
+
+		$options = array(
+			'version' => 123456790,
+		);
+
+		$task_db_migrate_redo_mock
+			->expects($this->at(2))
+			->method('migrate')
+			->with(
+				$this->equalTo($up_with_version),
+				$this->equalTo($down_with_version)
+			);
+
+		$task_db_migrate_redo_mock->_execute($options);
+
+		/****************************
+		 * With steps
+		 ****************************/
+		$down_with_steps = array(
+			array(
+				'name' => 'test_migration_3',
+				'file' => '/path/to/test/migration/file_3.php',
+				'version' => 123456793,
+				'module' => 'test',
+			),
+			array(
+				'name' => 'test_migration_2',
+				'file' => '/path/to/test/migration/file_2.php',
+				'version' => 123456790,
+				'module' => 'test',
+			),
+		);
+		$up_with_steps = array_reverse($down_with_steps);
+
+		$options = array(
+			'steps' => 2,
+		);
+
+		$task_db_migrate_redo_mock
+			->expects($this->at(2))
+			->method('migrate')
+			->with(
+				$this->equalTo($up_with_steps),
+				$this->equalTo($down_with_steps)
+			);
+
+		$task_db_migrate_redo_mock->_execute($options);
+
+		/****************************
+		 * With default steps value
+		 ****************************/
+		$down_with_default_steps_value = array(
+			array(
+				'name' => 'test_migration_3',
+				'file' => '/path/to/test/migration/file_3.php',
+				'version' => 123456793,
+				'module' => 'test',
+			),
+		);
+		$up_with_default_steps_value = array_reverse($down_with_default_steps_value);
+
+		$options = array(
+			'steps' => 1,
+		);
+
+		$task_db_migrate_redo_mock
+			->expects($this->at(2))
+			->method('migrate')
+			->with(
+				$this->equalTo($up_with_default_steps_value),
+				$this->equalTo($down_with_default_steps_value)
+			);
+
+		$task_db_migrate_redo_mock->_execute($options);
+	}
+
+	public function test_db_redo_not_executed_migration()
+	{
+		$task_db_migrate_redo_mock = $this->getMock(
+			'Task_Db_Migrate_Redo',
+			array('executed_migrations', 'migrate', 'all_migrations'),
+			array(),
+			'',
+			FALSE
+		);
+		$task_db_migrate_redo_mock
+			->expects($this->any())
+			->method('all_migrations')
+			->will($this->returnValue($this->get_migrations()));
+
+		/****************************
+		 * With version not executed migration
+		 ****************************/
+		$execute_migrations = $this->get_migrations();
+		unset($execute_migrations[2]);
+
+		$task_db_migrate_redo_mock
+			->expects($this->once())
+			->method('executed_migrations')
+			->will($this->returnValue(array_reverse($execute_migrations)));
+
+		$down_with_version_not_executed_migration = array();
+		$up_with_version_not_executed_migration = array(
+			array(
+				'name' => 'test_migration_3',
+				'file' => '/path/to/test/migration/file_3.php',
+				'version' => 123456793,
+				'module' => 'test',
+			),
+		);
+
+		$options = array(
+			'version' => 123456793,
+		);
+
+		$task_db_migrate_redo_mock
+			->expects($this->at(2))
+			->method('migrate')
+			->with(
+				$this->equalTo($up_with_version_not_executed_migration),
+				$this->equalTo($down_with_version_not_executed_migration)
+			);
+
+		$task_db_migrate_redo_mock->_execute($options);
+	}
 }

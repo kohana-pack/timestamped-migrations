@@ -20,15 +20,19 @@ class Task_Db_Migrate_Redo extends Minion_Migration {
 	public function _execute(array $options)
 	{
 		$executed = $this->executed_migrations();
+		$all_migrations = $this->all_migrations();
 
 		$up = array();
 		$down = array();
 
-		if (isset($options['version']))
+		if (Arr::get($options, 'version') !== NULL)
 		{
-			if (in_array($options['version'], $executed))
+			foreach ($executed as $migration)
 			{
-				$down[] = $options['version'];	
+				if($migration['version'] == $options['version'])
+				{
+					$down[] = $migration;
+				}
 			}
 		}
 		else
@@ -36,9 +40,15 @@ class Task_Db_Migrate_Redo extends Minion_Migration {
 			$down = array_slice($executed, 0, $options['steps']);
 		}
 
-		if (isset($options['version']))
+		if (Arr::get($options, 'version') !== NULL)
 		{
-			$up[] = $options['version'];
+			foreach ($all_migrations as $migration)
+			{
+				if($migration['version'] == $options['version'])
+				{
+					$up[] = $migration;
+				}
+			}
 		}
 		else
 		{
