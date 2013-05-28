@@ -46,7 +46,7 @@ class taskDbMigrateTest extends Unittest_TestCase
 		/****************************
 		 * With steps
 		 ****************************/
-		$down = array(
+		$down_with_steps = array(
 			array(
 				'name' => 'test_migration_3',
 				'file' => '/path/to/test/migration/file_3.php',
@@ -62,11 +62,11 @@ class taskDbMigrateTest extends Unittest_TestCase
 		);
 
 		$task_db_migrate_down_mock
-			->expects($this->at(3))
+			->expects($this->at(1))
 			->method('migrate')
 			->with(
 				$this->equalTo($up),
-				$this->equalTo($down)
+				$this->equalTo($down_with_steps)
 			);
 
 		$options = array(

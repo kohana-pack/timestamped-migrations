@@ -26,9 +26,12 @@ class Task_Db_Migrate_Down extends Minion_Migration {
 
 		if (Arr::get($options,"version"))
 		{
-			if (in_array($options["version"], $executed))
+			foreach ($executed as $migration)
 			{
-				$down[] = $options["version"];	
+				if($migration['version'] == $options['version'])
+				{
+					$down[] = $migration;
+				}
 			}
 		}
 		else
