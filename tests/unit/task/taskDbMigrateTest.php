@@ -377,4 +377,92 @@ class taskDbMigrateTest extends Unittest_TestCase
 
 		$task_db_migrate_redo_mock->_execute($options);
 	}
+
+	public function test_db_migrate()
+	{
+		$task_db_migrate_mock = $this->getMock(
+			'Task_Db_Migrate',
+			array('executed_migrations', 'migrate', 'all_migrations', 'unexecuted_migrations'),
+			array(),
+			'',
+			FALSE
+		);
+
+		$all_migrations = $this->get_migrations();
+		$executed = array_values(Arr::extract($all_migrations, array(1)));
+		$unexecuted = array_values(Arr::extract($all_migrations, array(0,2)));
+
+		$task_db_migrate_mock
+			->expects($this->any())
+			->method('all_migrations')
+			->will($this->returnValue($all_migrations));
+		$task_db_migrate_mock
+			->expects($this->any())
+			->method('executed_migrations')
+			->will($this->returnValue($executed));
+		$task_db_migrate_mock
+			->expects($this->any())
+			->method('unexecuted_migrations')
+			->will($this->returnValue($unexecuted));
+
+
+		/****************************
+		 * With version
+		 ****************************/
+		$up_with_version = array($unexecuted[0]);
+		$down_with_version = $executed;
+
+		$options = array(
+			'version' => 123456789
+		);
+
+		$task_db_migrate_mock
+			->expects($this->at(3))
+			->method('migrate')
+			->with(
+				$this->equalTo($up_with_version),
+				$this->equalTo($down_with_version)
+			);
+
+		$task_db_migrate_mock->_execute($options);
+
+
+		/****************************
+		 * With steps
+		 ****************************/
+		$up_with_steps = $unexecuted;
+		$down_with_steps = array();
+
+		$options = array(
+			'steps' => 2,
+		);
+
+		$task_db_migrate_mock
+			->expects($this->at(3))
+			->method('migrate')
+			->with(
+				$this->equalTo($up_with_steps),
+				$this->equalTo($down_with_steps)
+			);
+
+		$task_db_migrate_mock->_execute($options);
+
+		/****************************
+		 * Without all
+		 ****************************/
+		$up_without_all = $unexecuted;
+		$down_without_all = array();
+
+		$options = array();
+
+		$task_db_migrate_mock
+			->expects($this->at(3))
+			->method('migrate')
+			->with(
+				$this->equalTo($up_without_all),
+				$this->equalTo($down_without_all)
+			);
+
+		$task_db_migrate_mock->_execute($options);
+	}
 }
