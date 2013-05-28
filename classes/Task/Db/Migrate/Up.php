@@ -24,11 +24,14 @@ class Task_Db_Migrate_Up extends Minion_Migration {
 		$up = array();
 		$down = array();
 
-		if ($options["version"])
+		if (Arr::get($options, 'version') !== NULL)
 		{
-			if (in_array($options["version"], $unexecuted))
+			foreach ($unexecuted as $migration)
 			{
-				$up[] = $options["version"];	
+				if($migration['version'] == $options['version'])
+				{
+					$up[] = $migration;
+				}
 			}
 		}
 		else
