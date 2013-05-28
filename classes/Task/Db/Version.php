@@ -13,7 +13,8 @@ class Task_Db_Version extends Minion_Task {
 		$migrations = new Migrations(array('log' => 'Minion_CLI::write'));
 
 		$executed_migrations = $migrations->get_executed_migrations();
+		$executed_migrations_versions = Arr::path($executed_migrations, '*.version', array());
 
-		Minion_CLI::write('Current Version: '.end($executed_migrations));
+		Minion_CLI::write('Current Version: '.end($executed_migrations_versions));
 	}
 }
