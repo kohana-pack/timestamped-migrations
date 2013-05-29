@@ -25,6 +25,13 @@ class Task_Db_Migrate_Redo extends Minion_Migration {
 		$up = array();
 		$down = array();
 
+		if (Arr::get($options, 'module'))
+		{
+			$module = Arr::get($options, 'module');
+			$executed = $this->filter_migrations_by_module($executed, $module);
+			$all_migrations = $this->filter_migrations_by_module($all_migrations, $module);
+		}
+
 		if (Arr::get($options, 'version') !== NULL)
 		{
 			foreach ($executed as $migration)
