@@ -24,6 +24,12 @@ class Task_Db_Migrate_Down extends Minion_Migration {
 		$up = array();
 		$down = array();
 
+		if (Arr::get($options, 'module'))
+		{
+			$module = Arr::get($options, 'module');
+			$executed = $this->filter_migrations_by_module($executed, $module);
+		}
+
 		if (Arr::get($options,"version"))
 		{
 			foreach ($executed as $migration)

@@ -247,7 +247,7 @@ class taskDbMigrateWithModuleOptionTest extends Unittest_TestCase
 		$task_db_migrate_up_mock->_execute($options);
 
 		/****************************
-		 * With steps
+		 * With steps and module
 		 ****************************/
 		$options = array(
 			'steps' => 2,
@@ -280,7 +280,7 @@ class taskDbMigrateWithModuleOptionTest extends Unittest_TestCase
 		$task_db_migrate_up_mock->_execute($options);
 
 		/****************************
-		 * With default steps value
+		 * With default steps value and module
 		 ****************************/
 		$options = array(
 			'steps' => 1,
@@ -305,5 +305,103 @@ class taskDbMigrateWithModuleOptionTest extends Unittest_TestCase
 			);
 
 		$task_db_migrate_up_mock->_execute($options);
+	}
+
+	public function test_db_down_task()
+	{
+		$task_db_migrate_down_mock = $this->getMock('Task_Db_Migrate_Down', array('executed_migrations', 'migrate'), array(), '', FALSE);
+		$task_db_migrate_down_mock
+			->expects($this->any())
+			->method('executed_migrations')
+			->will($this->returnValue(array_reverse($this->get_migrations())));
+
+		$up = array();
+
+		/****************************
+		 * With version and module
+		 ****************************/
+		$options = array(
+			'version' => 100000004,
+			'module' => 'test',
+		);
+
+		$down = array(
+			array(
+				'name' => 'test_migration_4',
+				'file' => '/path/to/test/migration/file_4.php',
+				'version' => 100000004,
+				'module' => 'test',
+			),
+		);
+
+		$task_db_migrate_down_mock
+			->expects($this->at(1))
+			->method('migrate')
+			->with(
+				$this->equalTo($up),
+				$this->equalTo($down)
+			);
+
+		$task_db_migrate_down_mock->_execute($options);
+
+		/****************************
+		 * With steps and module
+		 ****************************/
+		$options = array(
+			'steps' => 2,
+			'module' => 'test_2',
+		);
+
+		$down_with_steps = array(
+			array(
+				'name' => 'test_migration_5',
+				'file' => '/path/to/test/migration/file_5.php',
+				'version' => 100000005,
+				'module' => 'test_2',
+			),
+			array(
+				'name' => 'test_migration_3',
+				'file' => '/path/to/test/migration/file_3.php',
+				'version' => 100000003,
+				'module' => 'test_2',
+			),
+		);
+
+		$task_db_migrate_down_mock
+			->expects($this->at(1))
+			->method('migrate')
+			->with(
+				$this->equalTo($up),
+				$this->equalTo($down_with_steps)
+			);
+
+		$task_db_migrate_down_mock->_execute($options);
+
+		/****************************
+		 * With default steps value and module
+		 ****************************/
+		$options = array(
+			'steps' => 1,
+			'module' => 'test_2',
+		);
+
+		$down_with_default_steps_value = array(
+			array(
+				'name' => 'test_migration_5',
+				'file' => '/path/to/test/migration/file_5.php',
+				'version' => 100000005,
+				'module' => 'test_2',
+			),
+		);
+
+		$task_db_migrate_down_mock
+			->expects($this->at(1))
+			->method('migrate')
+			->with(
+				$this->equalTo($up),
+				$this->equalTo($down_with_default_steps_value)
+			);
+
+		$task_db_migrate_down_mock->_execute($options);
 	}
 }
