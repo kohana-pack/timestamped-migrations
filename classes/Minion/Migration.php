@@ -11,7 +11,8 @@ abstract class Minion_Migration extends Minion_Task {
 	protected $_options = array(
 		'version' => NULL,
 		'steps' => NULL,
-		'dry-run' => FALSE
+		'dry-run' => FALSE,
+		'module' => NULL,
 	);
 
 	protected $_migrations;
@@ -39,6 +40,24 @@ abstract class Minion_Migration extends Minion_Task {
 	public function all_migrations()
 	{
 		return $this->migrations()->get_migrations();
+	}
+
+	/**
+	 * @param array $migrations
+	 * @param string $module
+	 * @return array
+	 */
+	public function filter_migrations_by_module($migrations, $module)
+	{
+		return array_values(
+			array_filter(
+				$migrations,
+				function ($migrations) use($module)
+				{
+					return $migrations['module'] == $module;
+				}
+			)
+		);
 	}
 
 	public function migrate(array $up, array $down, $dry_run = FALSE)

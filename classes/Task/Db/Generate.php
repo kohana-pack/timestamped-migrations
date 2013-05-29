@@ -1,6 +1,10 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 /**
  * Generate a migration file
+ *
+ * It can accept the following options:
+ *  - name:     the name of the migration. It is required
+ *  - module:   the module name for migration. It is optional
  * 
  * Based on the name of the migration it will be populated with appropraite commands:
  * 
@@ -23,8 +27,6 @@
  *  - is_... - boolean
  *  - description or text - text
  *
- * @param string name required paramter - the name of the migration
- * @param string module optional parametr - the module name for migration
  * @author     Ivan Kerin
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt

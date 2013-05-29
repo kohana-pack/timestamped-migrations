@@ -2,9 +2,12 @@
 /**
  * Execute all unexecuted migrations. Behavior changes when supplied any of the parameters
  *
- * @param string version set which version you want to go to. Will execute nessesary migrations to reach this version (up or down)
- * @param integer steps how many migrations to execute before stopping. works for both up and down.
- * @param boolean dry-run if this flag is set, will run the migration without accually touching the database, only showing the result.
+ * It can accept the following options:
+ *  - version:      (string) set which version you want to go to. Will execute nessesary migrations to reach this version (up or down)
+ *  - module        (string) indicates that it is necessary to work only with migrations of this module
+ *  - steps         (integer) how many migrations to execute before stopping. works for both up and down.
+ *  - dry-run       (boolean) if this flag is set, will run the migration without accually touching the database, only showing the result.
+ * 
  * @author     Ivan Kerin
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
@@ -20,15 +23,23 @@ class Task_Db_Migrate extends Minion_Migration {
 		$up = array();
 		$down = array();
 
-		if (Arr::get($options,"version"))
+		if (Arr::get($options, "module"))
+		{
+			$module = Arr::get($options, "module");
+			$executed = $this->filter_migrations_by_module($executed, $module);
+			$unexecuted = $this->filter_migrations_by_module($unexecuted, $module);
+			$all = $this->filter_migrations_by_module($all, $module);
+		}
+
+		if (Arr::get($options, "version"))
 		{
 			foreach ($all as $migration)
 			{
-				if ( ! in_array($migration, $executed) AND $migration <= $options['version'])
+				if ( FALSE === array_search($migration, $executed) AND $migration['version'] <= $options['version'])
 				{
 					$up[] = $migration;
 				}
-				if (in_array($migration, $executed) AND $migration > $options['version']) 
+				if ( FALSE !== array_search($migration, $executed) AND $migration['version'] > $options['version'])
 				{
 					$down[] = $migration;
 				}
