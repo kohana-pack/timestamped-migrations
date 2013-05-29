@@ -14,7 +14,8 @@ class Task_Db_Migrate_Up extends Minion_Migration {
 	protected $_options = array(
 		'version' => NULL,
 		'steps' => 1,
-		'dry-run' => FALSE
+		'dry-run' => FALSE,
+		'module' => NULL,
 	);
 
 	public function _execute(array $options)
