@@ -31,6 +31,11 @@ If you specify a target version, Active Record will run the required migrations 
 
 If this is greater than the current version (i.e. it is migrating upwards) this will run the up method on all migrations up to and including 2008090612, if migrating downwards this will run the down method on all the migrations down to, but not including, 2008090612.
 
+To manipulate the migration of one module, you can use the option "module." For example:
+
+	./minion db:migrate --module=my_module
+
+
 Rolling Back
 ------------
 
