@@ -2,9 +2,12 @@
 /**
  * Migrate up the first unexecuted migration. Behavior changes when supplied any of the parameters
  *
- * @param string version migrate all the way up to the specified migration.
- * @param integer steps how many times to migrate up
- * @param boolean dry-run if this flag is set, will run the migration without accually touching the database, only showing the result.
+ * It can accept the following options:
+ *  - version       (string) migrate all the way up to the specified migration.
+ *  - module        (string) indicates that it is necessary to work only with migrations of this module
+ *  - steps         (integer) how many times to migrate up
+ *  - dry-run       (boolean) if this flag is set, will run the migration without accually touching the database, only showing the result.
+ *
  * @author     Ivan Kerin
  * @copyright  (c) 2011-2012 Despark Ltd.
  * @license    http://www.opensource.org/licenses/isc-license.txt
