@@ -15,6 +15,26 @@ class Task_Db_Version extends Minion_Task {
 		$executed_migrations = $migrations->get_executed_migrations();
 		$executed_migrations_versions = Arr::path($executed_migrations, '*.version', array());
 
-		Minion_CLI::write('Current Version: '.end($executed_migrations_versions));
+		$migration_modules = array();
+
+		foreach ($executed_migrations as $migration) {
+			if (is_array($migration))
+			{
+				$migration_modules[arr::get($migration, 'module')] = arr::get($migration, 'version');
+			}
+		}
+
+		Minion_CLI::write('Current version for modules : ');
+		if (count($migration_modules) == 0)
+		{
+			Minion_CLI::write("No applied migrations");
+		}
+		else
+		{
+			foreach ($migration_modules as $module => $version)
+			{
+				Minion_CLI::write(sprintf("  %20s - %s", $module, $version));
+			}
+		}
 	}
 }

@@ -154,11 +154,11 @@ class Migrations
 	{
 		if ( ! $this->migrations)
 		{
-			$migrations = Kohana::list_files($this->config['path']);
-			$migrations = array_filter($migrations, function($var) {
+			$migration_files = $this->get_migration_files();
+			$migration_files = array_filter($migration_files, function($var) {
 				return preg_match('/'.EXT.'$/', $var);
 			});
-			foreach ((array) $migrations as $file)
+			foreach ((array) $migration_files as $file)
 			{
 				$name = basename($file, EXT);
 				$migration = array();
@@ -174,7 +174,8 @@ class Migrations
 
 	public function module_by_file($file)
 	{
-		foreach (Kohana::modules() as $module_name => $module_path)
+		$modules = $this->get_kohana_modules();
+		foreach ($modules as $module_name => $module_path)
 		{
 			if (preg_match("/".preg_quote($module_path, "/")."/", $file))
 			{
@@ -182,7 +183,7 @@ class Migrations
 			}
 		}
 
-		return false;
+		return 'application';
 	}
 
 	public function clear_all()
@@ -296,5 +297,21 @@ class Migrations
 	public function get_driver()
 	{
 		return $this->driver;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_migration_files()
+	{
+		return Kohana::list_files($this->config['path']);
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_kohana_modules()
+	{
+		return Kohana::modules();
 	}
 }
