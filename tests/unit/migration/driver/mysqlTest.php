@@ -34,6 +34,29 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 		), array('id' => false));
 	}
 
+	public function test_create_table_with_options()
+	{
+		$driver = $this->getMock('Migration_Driver_Mysql', array('execute'), array(Kohana::TESTING));
+		$driver->expects($this->at(0))->method('execute')->with(
+			$this->equalTo('CREATE TABLE `users` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `email` varchar(254) NOT NULL, `username` varchar(32) NOT NULL, `password` varchar(64) NOT NULL, `logins` int(10)  UNSIGNED NOT NULL DEFAULT \'0\', `last_login` int(10) UNSIGNED, PRIMARY KEY (`id`)) ENGINE=innoDB DEFAULT CHARSET=utf8')
+		);
+
+		$driver->create_table(
+			'users',
+			array(
+				'id'            => 'primary_key',
+				'email'         => array('type' => 'varchar(254)', 'null' => FALSE),
+				'username'      => array('type' => 'varchar(32)', 'null' => FALSE),
+				'password'      => array('type' => 'varchar(64)', 'null' => FALSE),
+				'logins'        => array('type' => 'int(10)', 'unsigned' => TRUE, 'null' => FALSE, 'default' => '0'),
+				'last_login'    => array('type' => 'int(10)', 'unsigned' => TRUE),
+			),
+			array(
+				'options' => array('ENGINE=innoDB', 'DEFAULT CHARSET=utf8'),
+			)
+		);
+	}
+
 	public function test_column_default_empty_and_zero()
 	{
 		$driver = $this->getMock('Migration_Driver_Mysql', array('execute'), array(Kohana::TESTING));
