@@ -75,7 +75,7 @@ class Migration_Driver_Mysql_Table extends Migration_Driver_Table
 		return join(' ', array_filter(array(
 			"CREATE TABLE `{$this->name}`",
 			'('. join(', ', $columns).')',
-			$this->options
+			(is_array($this->options) ? join(' ', $this->options) : $this->options)
 		)));
 	}
 

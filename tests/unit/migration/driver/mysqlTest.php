@@ -38,7 +38,7 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 	{
 		$driver = $this->getMock('Migration_Driver_Mysql', array('execute'), array(Kohana::TESTING));
 		$driver->expects($this->at(0))->method('execute')->with(
-			$this->equalTo('CREATE TABLE `users` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `email` varchar(254) NOT NULL, `username` varchar(32) NOT NULL, `password` varchar(64) NOT NULL, `logins` int(10)  UNSIGNED NOT NULL DEFAULT \'0\', `last_login` int(10) UNSIGNED, PRIMARY KEY (`id`)) ENGINE=innoDB DEFAULT CHARSET=utf8')
+			$this->equalTo('CREATE TABLE `users` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `email` varchar(254) NOT NULL, `username` varchar(32) NOT NULL, `password` varchar(64) NOT NULL, `logins` int(10) UNSIGNED NOT NULL DEFAULT \'0\', `last_login` int(10) UNSIGNED, PRIMARY KEY (`id`)) ENGINE=innoDB DEFAULT CHARSET=utf8')
 		);
 
 		$driver->create_table(
@@ -184,7 +184,7 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 			array('text', '`field2` TEXT'),
 			array(array('type' => 'BIGINT'), '`field2` BIGINT'),
 			array('integer', '`field2` INT'),
-			array('boolean', '`field2` TINYINT (1) DEFAULT \'0\' NOT NULL'),
+			array('boolean', '`field2` TINYINT (1) NOT NULL DEFAULT \'0\''),
 			array('primary_key', '`field2` INT UNSIGNED NOT NULL AUTO_INCREMENT'),
 			array('decimal', '`field2` DECIMAL (10, 2)'),
 			array(array('decimal', 'limit' => 7), '`field2` DECIMAL (7, 2)'),
@@ -197,6 +197,7 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 			array(array('integer', 'primary' => TRUE), '`field2` INT'),
 			array(array('integer', 'after' => 'field2'), '`field2` INT AFTER `field2`'),
 			array(array('integer', 'default' => 3), '`field2` INT DEFAULT \'3\''),
+			array(array('integer', 'unsigned' => TRUE, 'null' => FALSE, 'default' => '0'), '`field2` INT UNSIGNED NOT NULL DEFAULT \'0\''),
 		);
 	}
 
