@@ -120,6 +120,29 @@ class Migration_Driver_Mysql_Column extends Migration_Driver_Column
 		return Arr::get(self::native_types, strtolower($this->type));
 	}
 
+	public function get_default($defaultValue)
+	{
+		$defaultString = NULL;
+
+		if (array_key_exists('default', $this->params))
+		{
+			if ($defaultValue === NULL)
+			{
+				$defaultString = "DEFAULT NULL";
+			}
+			else if (0 == strcasecmp($defaultValue, 'CURRENT_TIMESTAMP'))
+			{
+				$defaultString = "DEFAULT CURRENT_TIMESTAMP";
+			}
+			else
+			{
+				$defaultString = "DEFAULT ".$this->driver->pdo->quote($defaultValue);
+			}
+		}
+
+		return $defaultString;
+	}
+
 	public function sql()
 	{
 		extract(Arr::extract($this->params, Migration_Driver_Column::$available_params));
@@ -131,8 +154,7 @@ class Migration_Driver_Mysql_Column extends Migration_Driver_Column
 			$values ? ('('.join(', ', array_map(array($this->driver->pdo, 'quote'), $values)).')') : NULL,
 			$unsigned ? ("UNSIGNED") : NULL,
 			$null !== NULL ? ($null ? "NULL" : "NOT NULL") : NULL,
-			isset($this->params['default']) ? ("DEFAULT ".$this->driver->pdo->quote($default)) : NULL,
-			(array_key_exists('default', $this->params) AND $default === null) ? ("DEFAULT NULL") : NULL,
+			$this->get_default($default),
 			$auto ? ("AUTO_INCREMENT") : NULL,
 			$after ? ("AFTER `{$after}`") : NULL,
 			$first ? ("FIRST") : NULL,
