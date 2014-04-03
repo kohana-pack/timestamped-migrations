@@ -198,6 +198,9 @@ class Unit_Migration_Driver_MysqlTest extends Unittest_TestCase {
 			array(array('integer', 'after' => 'field2'), '`field2` INT AFTER `field2`'),
 			array(array('integer', 'default' => 3), '`field2` INT DEFAULT \'3\''),
 			array(array('integer', 'unsigned' => TRUE, 'null' => FALSE, 'default' => '0'), '`field2` INT UNSIGNED NOT NULL DEFAULT \'0\''),
+			array(array('timestamp', 'default' => 'CURRENT_TIMESTAMP'), '`field2` TIMESTAMP DEFAULT CURRENT_TIMESTAMP'),
+			array(array('timestamp', 'default' => DB::expr("CURRENT_TIMESTAMP")), '`field2` TIMESTAMP DEFAULT CURRENT_TIMESTAMP'),
+			array('timestamp', '`field2` TIMESTAMP'),
 		);
 	}
 
